@@ -35,7 +35,8 @@ displays:
     - !<View> {name: Non-Colour Data, colorspace: Non-Colour Data}
     - !<View> {name: Linear Raw, colorspace: Linear}
     - !<View> {name: Filmic Log Encoding Base, colorspace: Filmic Log Encoding}
-# VRay users should uncomment the Filmic views below as VRay doesn't permit Looks
+# VRay, Modo, Nuke etc. users should uncomment the Filmic views below.
+# These applications use clusters of Views.
 #    - !<View> {name: Filmic Very High Contrast, colorspace: Filmic Log Encoding, look: +Very Low Contrast}
 #    - !<View> {name: Filmic High Contrast, colorspace: Filmic Log Encoding, look: +High Contrast}
 #    - !<View> {name: Filmic Medium High Contrast, colorspace: Filmic Log Encoding, look: +Medium High Contrast}
@@ -44,12 +45,14 @@ displays:
 #    - !<View> {name: Filmic Low Contrast, colorspace: Filmic Log Encoding, look: +Low Contrast}
 #    - !<View> {name: Filmic Base Contrast, colorspace: Filmic Log Encoding, look: +Base Contrast}
 #    ~ !<View> {name: Filmic False Colour, colourspace: Filmic Log Encoding, look: +Filmic False Colour}
-#    - !<View> {name: Debug, colorspace: Debug}
-
+  Apple P3:
+    - !<View> {name: sRGB EOTF, colorspace: Apple P3 sRGB EOTF}
   None:
     - !<View> {name: No View, colorspace: Non-Colour Data}
+# Do not uncomment the following. It is for testing purposes only.
+#    - !<View> {name: Debug, colorspace: Debug}
 
-active_displays: [sRGB / BT.709, None]
+active_displays: [sRGB / BT.709, Apple P3, None]
 #active_views: [Filmic Log Encoding Base, sRGB EOTF, Non-Colour Data, Linear Raw, No View]
 
 colorspaces:
@@ -81,7 +84,7 @@ colorspaces:
 
   - !<ColorSpace>
     name: Filmic Log Encoding
-    family:
+    family: Transfer Functions
     equalitygroup:
     bitdepth: 32f
     description: |
@@ -110,7 +113,7 @@ colorspaces:
 
   - !<ColorSpace>
     name: sRGB EOTF
-    family:
+    family: Transfer Functions
     equalitygroup:
     bitdepth: 32f
     description: |
@@ -122,7 +125,7 @@ colorspaces:
 
   - !<ColorSpace>
     name: BT.1886 EOTF
-    family:
+    family: Transfer Functions
     equalitygroup:
     bitdepth: 32f
     description: |
@@ -131,6 +134,50 @@ colorspaces:
     allocation: uniform
     allocationvars: [0.0, 1.0]
     to_reference: !<FileTransform> {src: BT.1886_to_Linear.spi1d, interpolation: linear}
+
+# Following based on the iMac DCI-P3 ICC profile,
+# OCIO Transposed
+# MD5 b9df39c23521f651665de5668808cf82
+#
+#       2.41086396  -0.83002024 0.04819249
+#       -0.99258594 1.77067405  -0.09723136
+#       -0.40244134 0.03592395  1.27379943
+# Normalized:
+#       1.47993270  -0.50951614 0.02958344
+#       -1.45784842 2.60065578  -0.14280736
+#       -0.44356807 0.03959513  1.40397294
+
+# D65 aligned sRGB to XYZ, OCIO Transposed
+#       0.4124564	0.2126729	0.0193339
+#       0.3575761	0.7151522	0.119192
+#       0.1804375	0.072175	0.9503041
+#
+# Normalized Transposed:
+#       0.681778606	0.319618527	-0.001397134
+#       0.284578090	0.674688387	0.040733524
+#       0.154928063	0.056627816	0.788444121
+
+  - !<ColorSpace>
+    name: Apple P3 sRGB EOTF
+    family: Displays
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      Apple P3 BT.1886 recommended display referred Electro-Optical Transfer Function.
+    isdata: false
+    allocation: uniform
+    allocationvars: [0.0, 1.0]
+    from_reference: !<GroupTransform>
+      children:
+#        - !<MatrixTransform> {matrix: [
+#          0.681778606, 0.319618527, -0.001397134, 0,
+#          0.284578090, 0.674688387, 0.040733524, 0,
+#          0.154928063, 0.056627816, 0.788444121, 0,
+#          0, 0, 0, 1]}
+# Non-Normalized BT.709 D65 to XYZ
+        - !<MatrixTransform> {matrix: [0.433887, 0.376224, 0.189889, 0.0, 0.212639, 0.715169, 0.0721923, 0.0, 0.01775, 0.109448, 0.872802, 0.0, 0.0, 0.0, 0.0, 1.0]}
+        - !<MatrixTransform> {matrix: [2.09228, -0.747492, -0.34479, 0.0, -0.859493, 1.81975, 0.0397476, 0.0, 0.0388772, -0.0814796, 1.0426, 0.0, 0.0, 0.0, 0.0, 1.0]}
+        - !<ColorSpaceTransform> {src: Linear, dst: sRGB EOTF}
 
   - !<ColorSpace>
     name: Non-Colour Data
