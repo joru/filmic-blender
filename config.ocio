@@ -47,6 +47,7 @@ displays:
 #    ~ !<View> {name: Filmic False Colour, colourspace: Filmic Log Encoding, look: +Filmic False Colour}
   Apple P3:
     - !<View> {name: sRGB EOTF, colorspace: Apple P3 sRGB EOTF}
+    - !<View> {name: sRGB EOTF2, colorspace: iMac P3 2015}
   None:
     - !<View> {name: No View, colorspace: Non-Colour Data}
 # Do not uncomment the following. It is for testing purposes only.
@@ -147,7 +148,7 @@ colorspaces:
     allocationvars: [0.0, 1.0]
     from_reference: !<GroupTransform>
       children:
-        - !<MatrixTransform> {matrix: [0.433887, 0.376224, 0.189889, 0.0, 0.212639, 0.715169, 0.0721923, 0.0, 0.01775, 0.109448, 0.872802, 0.0, 0.0, 0.0, 0.0, 1.0]}
+        - !<MatrixTransform> {matrix: [0.412391, 0.357584, 0.180481, 0.0, 0.212639, 0.715169, 0.0721923, 0.0, 0.0193308, 0.119195, 0.950532, 0.0, 0.0, 0.0, 0.0, 1.0]}
         # Apple P3 D65 XYZ to RGB. These are adapted values, with a normalized
         # matrix to preserve white point. The source values are derived from the iMac
         # P3 ICC, iMac-A7B96997-A225-ECFB-0501-11A19B2BADCC.icc
@@ -155,7 +156,7 @@ colorspaces:
         # The values are based off of the hexadecimal calculated decimal converted values,
         # adapted from ICC D50 to D65 via Bradford. The chromaticities used for
         # the conversion are D65 { 0.31270,  0.32900} and D50 { 0.34567, 0.35850 }.
-        - !<MatrixTransform> {matrix: [2.09228, -0.747492, -0.34479, 0.0, -0.859493, 1.81975, 0.0397476, 0.0, 0.0388772, -0.0814796, 1.0426, 0.0, 0.0, 0.0, 0.0, 1.0]}
+        - !<MatrixTransform> {matrix: [0.523955, 0.238698, 0.187803, 0.0, 0.248265, 0.687397, 0.0643383, 0.0, 0.00146883, 0.0485956, 1.03899, 0.0, 0.0, 0.0, 0.0, 1.0], direction: inverse}
         - !<ColorSpaceTransform> {src: Linear, dst: sRGB EOTF}
 
   - !<ColorSpace>
@@ -214,3 +215,8 @@ looks:
     name: Very Low Contrast
     process_space: Filmic Log Encoding
     transform: !<FileTransform> {src: Filmic_to_0-35_1-30.spi1d, interpolation: linear}
+
+  - !<Look>
+    name: Testing
+    process_space: Filmic Log Encoding
+    transform: !<FileTransform> {src: Filmic_testing.spi1d, interpolation: linear}
