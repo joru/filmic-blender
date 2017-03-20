@@ -47,7 +47,6 @@ displays:
 #    ~ !<View> {name: Filmic False Colour, colourspace: Filmic Log Encoding, look: +Filmic False Colour}
   Apple P3:
     - !<View> {name: sRGB EOTF, colorspace: Apple P3 sRGB EOTF}
-    - !<View> {name: sRGB EOTF2, colorspace: iMac P3 2015}
   None:
     - !<View> {name: No View, colorspace: Non-Colour Data}
 # Do not uncomment the following. It is for testing purposes only.
